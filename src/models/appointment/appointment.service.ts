@@ -4,16 +4,23 @@ import { Repository } from 'typeorm';
 import { Appointment } from './appointment.entity';
 import { CreateAppointmentInput } from '../../dto/appointment/create-appointment.input';
 import { UpdateAppointmentInput } from '../../dto/appointment/update-appointment.input';
+import { DeleteAppointmentsInput } from '../../dto/appointment/delete-appointments.input';
+import { PatientService } from '../patient/patient.service';
+import { PsychologistService } from '../psychologist/psychologist.service';
 
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
+    private patientService: PatientService,
+    private psychologistService: PsychologistService,
   ) {}
 
   async findAll(): Promise<Appointment[]> {
-    return this.appointmentRepository.find();
+    return this.appointmentRepository.find({
+      relations: ['patient', 'psychologist'],
+    });
   }
 
   async findOneById(id: number): Promise<Appointment> {
@@ -21,7 +28,21 @@ export class AppointmentService {
   }
 
   async create(data: CreateAppointmentInput): Promise<Appointment> {
-    const appointment = this.appointmentRepository.create(data);
+    const patient = await this.patientService.findOneById(data.patientId);
+    const psychologist = await this.psychologistService.findOneById(
+      data.psychologistId,
+    );
+
+    if (!patient || !psychologist) {
+      throw new Error('Patient or Psychologist not found');
+    }
+
+    const appointment = this.appointmentRepository.create({
+      ...data,
+      patient,
+      psychologist,
+    });
+
     return this.appointmentRepository.save(appointment);
   }
 
@@ -41,5 +62,19 @@ export class AppointmentService {
     }
     await this.appointmentRepository.delete(id);
     return true;
+  }
+
+  async deleteAppointments(ids: DeleteAppointmentsInput): Promise<boolean[]> {
+    const result = await Promise.all(
+      ids.ids.map(async (id) => {
+        try {
+          await this.appointmentRepository.delete(id);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }),
+    );
+    return result;
   }
 }

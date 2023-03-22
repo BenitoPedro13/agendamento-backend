@@ -3,6 +3,7 @@ import { Appointment } from './appointment.entity';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentInput } from '../../dto/appointment/create-appointment.input';
 import { UpdateAppointmentInput } from '../../dto/appointment/update-appointment.input';
+import { DeleteAppointmentsInput } from '../../dto/appointment/delete-appointments.input';
 
 @Resolver(() => Appointment)
 export class AppointmentResolver {
@@ -36,5 +37,12 @@ export class AppointmentResolver {
   @Mutation(() => Boolean)
   async deleteAppointment(@Args('id') id: number): Promise<boolean> {
     return this.appointmentService.delete(id);
+  }
+
+  @Mutation(() => [Boolean])
+  async deleteAppointments(
+    @Args('ids') ids: DeleteAppointmentsInput,
+  ): Promise<boolean[]> {
+    return this.appointmentService.deleteAppointments(ids);
   }
 }
