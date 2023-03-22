@@ -1,0 +1,11 @@
+{
+  "type": "postgres",
+  "host": "babar.db.elephantsql.com",
+  "port": 5432,
+  "username": "negwqbjn",
+  "password": "33c5KEoO6Lz6xeOmXA44c50D8SZosxJk",
+  "database": "negwqbjn",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "autoLoadEntities": true,
+  "synchronize": true
+}

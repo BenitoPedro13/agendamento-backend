@@ -1,0 +1,63 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Appointment {
+  endTime: DateTime!
+  id: ID!
+  patient: Patient!
+  psychologist: Psychologist!
+  startTime: DateTime!
+}
+
+input CreateAppointmentInput {
+  endTime: DateTime!
+  patientId: Int!
+  psychologistId: Int!
+  startTime: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createAppointment(data: CreateAppointmentInput!): Appointment!
+  createPatient(name: String!): Patient!
+  createPsychologist(name: String!): Psychologist!
+  deleteAppointment(id: Float!): Boolean!
+  deletePatient(id: Float!): Boolean!
+  deletePsychologist(id: Float!): Boolean!
+  updateAppointment(data: UpdateAppointmentInput!, id: Float!): Appointment!
+  updatePatient(id: Float!, name: String!): Patient!
+  updatePsychologist(id: Float!, name: String!): Psychologist!
+}
+
+type Patient {
+  appointments: [Appointment!]
+  id: ID!
+  name: String!
+}
+
+type Psychologist {
+  appointments: [Appointment!]
+  id: ID!
+  name: String!
+}
+
+type Query {
+  getAllAppointments: [Appointment!]!
+  getAllPatients: [Patient!]!
+  getAllPsychologists: [Psychologist!]!
+  getAppointment(id: Float!): Appointment!
+  getPatient(id: Float!): Patient!
+  getPsychologist(id: Float!): Psychologist!
+}
+
+input UpdateAppointmentInput {
+  endTime: DateTime
+  patientId: Int
+  psychologistId: Int
+  startTime: DateTime
+}
